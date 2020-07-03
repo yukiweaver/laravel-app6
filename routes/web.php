@@ -17,4 +17,9 @@ use Illuminate\Support\Facades\Route;
 //     return view('welcome');
 // });
 
-Route::get('/', 'QuestionController@index')->name('question.index');
+Route::get('/', 'QuestionController@index')->name('root');
+Route::get('user/signin', 'UserController@signin')->name('user.signin');
+Route::post('user/login', 'UserController@login')->name('user.login');
+Route::get('user/signup', 'UserController@signup')->name('user.signup');
+Route::post('user/create', 'UserController@create')->name('user.create');
+Route::post('user/logout', 'UserController@logout')->name('user.logout');

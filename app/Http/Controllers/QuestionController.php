@@ -7,7 +7,9 @@ use App\Question;
 
 class QuestionController extends Controller
 {
-    // 問題一覧ページ表示アクション
+    /** 
+     * 問題一覧ページ表示
+     */
     public function index()
     {
       $questionModel = app()->make('App\Question');
