@@ -30,6 +30,7 @@ class Question extends Model
 
     /**
      * ランク問題を取得
+     * @return collection
      */
     public function findRankQuestions()
     {
@@ -45,6 +46,7 @@ class Question extends Model
 
     /**
      * お試し問題を取得
+     * @return collection
      */
     public function findTrialQuestions()
     {

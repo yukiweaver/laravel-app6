@@ -1,3 +1,7 @@
+.errors {
+  color: red;
+}
+
 h1 {
   position: relative;
   padding-left: 25px;
