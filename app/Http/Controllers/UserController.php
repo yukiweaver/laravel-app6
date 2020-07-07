@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\UserRequest;
 use App\User;
 use Illuminate\Support\Facades\Hash;
+use App\Rank;
 
 class UserController extends Controller
 {
@@ -46,7 +47,7 @@ class UserController extends Controller
      */
     public function store(UserRequest $request)
     {
-      $user     = new User;
+      $user     = app()->make('App\User');
       $name     = $request->input('name');
       $email    = $request->input('email');
       $password = $request->input('password');
@@ -55,7 +56,7 @@ class UserController extends Controller
         'email'     => $email,
         'password'  => Hash::make($password),
       ];
-      if (!$user->fill($params)->save()) {
+      if (!$user->registUser($params)) {
         return redirect()->route('user.signup')->with('error_message', 'User registration failed');
       }
       if (!Auth::attempt(['email' => $email, 'password' => $password])) {

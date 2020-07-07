@@ -21,5 +21,5 @@ Route::get('/', 'QuestionController@index')->name('root');
 Route::get('user/signin', 'UserController@signin')->name('user.signin');
 Route::post('user/login', 'UserController@login')->name('user.login');
 Route::get('user/signup', 'UserController@signup')->name('user.signup');
-Route::post('user/store', 'UserController@create')->name('user.store');
+Route::post('user/store', 'UserController@store')->name('user.store');
 Route::post('user/logout', 'UserController@logout')->name('user.logout');

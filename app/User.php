@@ -5,10 +5,41 @@ namespace App;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Rank;
+use Illuminate\Support\Facades\DB;
 
 class User extends Authenticatable
 {
     use Notifiable;
+
+    private $rank;
+
+    public function __construct(array $attributes = [], Rank $rank = null) {
+      parent::__construct($attributes);
+      //以降に個別の設定処理
+      if (isset($rank)) {
+        $this->setRank($rank);
+      }
+    }
+
+    /**
+     * ランク情報をセットする
+     * @param App\Rank $rank
+     * @return void
+     */
+    public function setRank(Rank $rank)
+    {
+      $this->rank = $rank;
+    }
+
+    /**
+     * ランク情報を取得する
+     * @return App\Rank
+     */
+    public function getRank()
+    {
+      return $this->rank;
+    }
 
     /**
      * The attributes that are mass assignable.
@@ -44,6 +75,34 @@ class User extends Authenticatable
 
     public function questions()
     {
-      return $this->belongsToMany('App\Question');
+      return $this->belongsToMany('App\Question')->withTimestamps();
+    }
+
+    /**
+     * ユーザを登録する
+     * 中間テーブルへのインサートも同時に行う
+     * @param array $params
+     * @return boolean
+     */
+    public function registUser(array $params)
+    {
+      DB::beginTransaction();
+      try {
+        $this->fill($params)->save();
+        $user = User::find($this->id);
+        $rankObj = $this->getRank();
+        $rankTypeArray = [\RankConst::D_RANK_TYPE, \RankConst::TRIAL_RANK_TYPE];
+        $ranks = $rankObj->findByRankTypeArray($rankTypeArray);
+        $rankIds = [];
+        foreach ($ranks as $rank) {
+          array_push($rankIds, $rank->id);
+        }
+        $user->ranks()->attach($rankIds);
+        DB::commit();
+        return true;
+      } catch (\Exception $e) {
+        DB::rollback();
+        return false;
+      }
     }
 }
