@@ -70,7 +70,7 @@ class User extends Authenticatable
 
     public function ranks()
     {
-      return $this->belongsToMany('App\Rank');
+      return $this->belongsToMany('App\Rank')->withTimestamps();
     }
 
     public function questions()
@@ -104,5 +104,24 @@ class User extends Authenticatable
         DB::rollback();
         return false;
       }
+    }
+
+    /**
+     * ユーザのランクタイプを返す
+     * @return int
+     */
+    public function getRankType()
+    {
+      $ranks = $this->ranks();
+      $currentRank = null;
+      foreach ($ranks as $rank) {
+        if (is_null($currentRank)) {
+          $currentRank = $rank->rank_type;
+        }
+        if ($currentRank > $rank->rank_type) {
+          $currentRank = $rank->rank_type;
+        }
+      }
+      return $currentRank;
     }
 }

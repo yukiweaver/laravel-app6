@@ -18,9 +18,20 @@
          @endif
          <h1>プログラミングスキルチェック</h1>
          <section class="questions">
+            @if (Auth::check())
+            <h2>ランク問題</h2>　<!-- sectionに見出しになります　-->
+            <span>あなたは現在Dランクです。あと○問正解でランクが昇格します。</span>
+            <br><br>
+            @foreach ($rank_questions as $r_question)
+            <section class="section">
+                <div class="box11">
+                  <h3>{{ $r_question->name }}</h3>　<!-- sectionに見出しになります　-->
+                </div>
+            </section>
+            @endforeach
+            @else
             <h2>お試し問題</h2>　<!-- sectionに見出しになります　-->
             <span>まずはお試し問題に挑戦してみよう！ランク問題にはログインすることで挑戦可能です。</span>
-            <br><br>
             @foreach ($trial_questions as $t_question)
             <section class="section">
                 <div class="box11">
@@ -28,6 +39,7 @@
                 </div>
             </section>
             @endforeach
+            @endif
           </section>
        </div>
      {{-- </div> --}}
