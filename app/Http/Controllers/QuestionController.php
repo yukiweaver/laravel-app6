@@ -13,16 +13,25 @@ class QuestionController extends Controller
      */
     public function index()
     {
+      $viewParams = [];
       if (Auth::check()) {
         $currentUser = auth()->user();
+        $currentRank = $currentUser->getRankType();
+        $viewParams['current_rank'] = $currentRank;
       }
       $questionModel = app()->make('App\Question');
       $rankQuestions = $questionModel->findRankQuestions();
       $trialQuestions = $questionModel->findTrialQuestions();
-      $viewParams = [
-        'rank_questions'  => $rankQuestions,
-        'trial_questions' => $trialQuestions,
-      ];
+      $viewParams['rank_questions'] = $rankQuestions;
+      $viewParams['trial_questions'] = $trialQuestions;
       return view('question.index', $viewParams);
+    }
+
+    /**
+     * 問題文を表示
+     */
+    public function problemStatement(Request $request)
+    {
+      //
     }
 }

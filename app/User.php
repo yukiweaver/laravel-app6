@@ -107,14 +107,13 @@ class User extends Authenticatable
     }
 
     /**
-     * ユーザのランクタイプを返す
+     * ユーザの現在のランクタイプを返す
      * @return int
      */
     public function getRankType()
     {
-      $ranks = $this->ranks();
       $currentRank = null;
-      foreach ($ranks as $rank) {
+      foreach ($this->ranks as $rank) {
         if (is_null($currentRank)) {
           $currentRank = $rank->rank_type;
         }

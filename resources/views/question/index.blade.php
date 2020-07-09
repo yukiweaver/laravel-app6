@@ -20,12 +20,13 @@
          <section class="questions">
             @if (Auth::check())
             <h2>ランク問題</h2>　<!-- sectionに見出しになります　-->
-            <span>あなたは現在Dランクです。あと○問正解でランクが昇格します。</span>
+            <span>あなたは現在{{ outputRankType($current_rank) }}です。あと○問正解でランクが昇格します。</span>
             <br><br>
             @foreach ($rank_questions as $r_question)
             <section class="section">
                 <div class="box11">
-                  <h3>{{ $r_question->name }}</h3>　<!-- sectionに見出しになります　-->
+                  <h3 class="question_name">{{ $r_question->name }}</h3>　<!-- sectionに見出しになります　-->
+                  <a href="{{ route('question.problem_statement', ['id' => $r_question->id]) }}" class="btn btn-primary challenge_btn">挑戦する</a>
                 </div>
             </section>
             @endforeach
@@ -35,7 +36,8 @@
             @foreach ($trial_questions as $t_question)
             <section class="section">
                 <div class="box11">
-                  <h3>{{ $t_question->name }}</h3>　<!-- sectionに見出しになります　-->
+                  <h3 class="question_name">{{ $t_question->name }}</h3>　<!-- sectionに見出しになります　-->
+                  <a href="{{ route('question.problem_statement', ['id' => $t_question->id]) }}" class="btn btn-primary challenge_btn">挑戦する</a>
                 </div>
             </section>
             @endforeach
