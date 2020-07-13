@@ -75,7 +75,7 @@ class User extends Authenticatable
 
     public function questions()
     {
-      return $this->belongsToMany('App\Question')->withTimestamps();
+      return $this->belongsToMany('App\Question')->withTimestamps()->withPivot(['is_correct', 'is_challenge']);
     }
 
     /**
@@ -122,5 +122,14 @@ class User extends Authenticatable
         }
       }
       return $currentRank;
+    }
+
+    /**
+     * 中間テーブルへインサートする
+     * @param int $questionId
+     */
+    public function insertQuestionUser(int $questionId)
+    {
+      $this->questions()->attach($questionId, ['is_correct' => false, 'is_challenge' => true]);
     }
 }

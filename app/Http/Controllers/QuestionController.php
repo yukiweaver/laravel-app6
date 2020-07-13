@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Question;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\QuestionRequest;
+use Illuminate\Support\Facades\Log;
 
 class QuestionController extends Controller
 {
@@ -30,14 +31,35 @@ class QuestionController extends Controller
 
     /**
      * 問題文を表示
+     * @param App\Http\Requests\QuestionRequest $request
      */
     public function problemStatement(QuestionRequest $request)
     {
       $question = Question::find($request->id);
+      if (Auth::check()) {
+        $currentUser = auth()->user();
+        $questionUser = app()->make('App\QuestionUser');
+        if (!$questionUser->checkByQuestionIdAndUserId($question->id, $currentUser->id)) {
+          // 中間テーブルにデータがなければインサート処理
+          $currentUser->insertQuestionUser($question->id);
+        }
+      }
       $viewParams = [
         'name'      => $question->name,
         'content'   => $question->content,
       ];
       return view('question.problem_statement', $viewParams);
+    }
+
+    /**
+     * 解答処理
+     * DBに正解フラグを立てるのはランク問題のみ
+     * @param Illuminate\Http\Request $request
+     */
+    public function answer(Request $request)
+    {
+      Log::debug($request->stdout);
+      Log::debug($request->stderr);
+      return response()->json();
     }
 }

@@ -20,7 +20,7 @@ class Question extends Model
 
     public function users()
     {
-      return $this->belongsToMany('App\User')->withTimestamps();
+      return $this->belongsToMany('App\User')->withTimestamps()->withPivot(['is_correct', 'is_challenge']);
     }
 
     public function rank()
