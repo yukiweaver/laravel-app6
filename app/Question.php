@@ -59,4 +59,20 @@ class Question extends Model
         ->get();
       return $trialQuestions;
     }
+
+    /**
+     * question_userテーブルの正解フラグを一件更新
+     * @param int $userId
+     * @return boolean
+     */
+    public function updateQuestionUser(int $userId)
+    {
+      $dbParams = [
+        'is_correct' => true,
+      ];
+      if ($this->users()->updateExistingPivot($userId, $dbParams)) {
+        return true;
+      }
+      return false;
+    }
 }

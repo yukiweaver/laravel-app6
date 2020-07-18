@@ -14,7 +14,7 @@ class QuestionUser extends Pivot
      * @param int $userId
      * @return boolean
      */
-    public function checkByQuestionIdAndUserId(int $questionId, int $userId)
+    public function existByQuestionIdAndUserId(int $questionId, int $userId)
     {
       return $this->where('question_id', $questionId)->where('user_id', $userId)->exists();
     }

@@ -39,27 +39,65 @@ class QuestionController extends Controller
       if (Auth::check()) {
         $currentUser = auth()->user();
         $questionUser = app()->make('App\QuestionUser');
-        if (!$questionUser->checkByQuestionIdAndUserId($question->id, $currentUser->id)) {
+        $userService = app()->makeWith('App\Services\UserService', ['user' => $currentUser]);
+        if ($userService->isHigherThanCurrentUserRank($question->rank->rank_type)) {
+          // 自身のランクより上の問題は閲覧不可
+          return redirect()->route('root');
+        }
+        if (!$questionUser->existByQuestionIdAndUserId($question->id, $currentUser->id)) {
           // 中間テーブルにデータがなければインサート処理
           $currentUser->insertQuestionUser($question->id);
         }
+      } else {
+        $questionService = app()->makeWith('App\Services\QuestionService', ['question' => $question]);
+        if ($questionService->isRankQuestion()) {
+          // 未ログイン状態でランク問題は閲覧不可
+          return redirect()->route('user.signin');
+        }
       }
       $viewParams = [
-        'name'      => $question->name,
-        'content'   => $question->content,
+        'name'        => $question->name,
+        'content'     => $question->content,
+        'question_id' => $question->id,
       ];
       return view('question.problem_statement', $viewParams);
     }
 
     /**
      * 解答処理
-     * DBに正解フラグを立てるのはランク問題のみ
      * @param Illuminate\Http\Request $request
      */
     public function answer(Request $request)
     {
-      Log::debug($request->stdout);
-      Log::debug($request->stderr);
-      return response()->json();
+      $stdout = $request->stdout;
+      $data = [
+        'stdout'      => $stdout,
+        'is_result'   => '',
+        'error'       => '',
+      ];
+      $question = Question::find($request->id);
+      $questionService = app()->makeWith('App\Services\QuestionService', ['question' => $question]);
+      // 正解かどうか判定する
+      if ($questionService->isCorrectAnswer($stdout)) {
+        $data['is_result'] = true;
+        if ($questionService->isRankQuestion()) {
+          $currentUser = auth()->user();
+          $userService = app()->makeWith('App\Services\UserService', ['user' => $currentUser]);
+          if ($userService->isHigherThanCurrentUserRank($question->rank_type)) {
+            // 自身のランクより上の問題は解答不可
+            $data['error'] = \MessageConst::ERRMSG_RANK_ABOVE_CURRENT_USER_RANK;
+            return putJsonError($data);
+          }
+          // ランク問題のみDB更新
+          if ($question->updateQuestionUser($currentUser->id)) {
+            return putJsonSuccess($data);
+          }
+          $data['error'] = \MessageConst::ERRMSG_DB_ERROR;
+          return putJsonError($data);
+        }
+        return putJsonSuccess($data);
+      }
+      $data['is_result'] = false;
+      return putJsonSuccess($data);
     }
 }

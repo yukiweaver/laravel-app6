@@ -229,6 +229,7 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         // 定数系
         'RankConst' =>  App\Consts\RankConst::class,
+        'MessageConst' => App\Consts\MessageConst::class,
 
     ],
 

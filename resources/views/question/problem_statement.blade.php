@@ -17,6 +17,7 @@
          </div>
          @endif
          <h1>プログラミングスキルチェック</h1>
+         <input type="hidden" value="{{ $question_id }}" id="question_id">
          <section class="questions">
            <h2 class="problem_statement_name">{{ $name }}</h2>　<!-- sectionに見出しになります　-->
             <span>{{ $content }}</span>
@@ -30,16 +31,13 @@
             <br><br><br>
             <h3 class="judgment">判定</h3>
             <div>◎判定結果</div>
-            <div>不正解</div>
+            <div id="judgment" class=""></div>
             <br>
             <div>◎出力結果</div>
-            <div>test</div>
-            <br>
-            <div>◎実行結果ステータス</div>
-            <div>Runtime error</div>
+            <div id="output_result"></div>
             <br>
             <div>◎実行時エラーメッセージ</div>
-            <div>PHP Parse error:  syntax error, unexpected ''test'' (T_CONSTANT_ENCAPSED_STRING) in /workspace/Main.php on line 4</div>
+            <div id="error_msg" class="incorrect"></div>
          </section>
        </div>
      {{-- </div> --}}
@@ -51,6 +49,8 @@
   const CREATE_URL = BASE_URL + '/runners/create';
   const GET_DETAILS_URL = BASE_URL + '/runners/get_details';
   const API_KEY = 'guest';
+  const INCORRECT_ANSWER = '不正解';
+  const CORRECT_ANSWER = '正解';
   let responseDetail = null;
   var editor = ace.edit("editor");
   editor.$blockScrolling = Infinity;
@@ -73,6 +73,30 @@
     })
   }
 
+  /** 
+   * 追加するクラスを決定する
+   * @param boolean addFlg
+   */
+  function DetermineClassToAdd(addFlg)
+  {
+    if (addFlg) {
+      if ($('#judgment').hasClass('incorrect')) {
+        $('#judgment').removeClass('incorrect');
+      }
+      if (!$('#judgment').hasClass('correct')) {
+        $('#judgment').addClass('correct');
+      }
+    } else {
+      if ($('#judgment').hasClass('correct')) {
+        $('#judgment').removeClass('correct');
+      }
+      if (!$('#judgment').hasClass('incorrect')) {
+        $('#judgment').addClass('incorrect');
+      }
+    }
+    return true;
+  }
+
   async function ajaxGetDetails(data) {
     await sleep(1000);
     let createId = data.id;
@@ -88,7 +112,7 @@
       ajaxAnswer(data);
     })
     .fail((data) => {
-      alert('システムエラー');
+      alert('APIシステムエラー（Details）');
       return;
     })
   }
@@ -97,6 +121,10 @@
     await sleep(1000);
     if (data.stderr) {
       // 入力したプログラムにエラーがある場合はjs側でエラー処理
+      DetermineClassToAdd(false);
+      $('#judgment').text(INCORRECT_ANSWER);
+      $('#error_msg').text(data.stderr);
+      return;
     }
     $.ajax({
       url: '/question/answer',
@@ -108,13 +136,27 @@
       data: {
         stdout: data.stdout,
         stderr: data.stderr,
+        id: $('#question_id').val(),
       }
     })
     .done((data) => {
       console.log('answer成功');
+      console.log(data);
+      if (data.status == 'ng') {
+        alert(data.content.error);
+        return;
+      }
+      if (data.content.is_result) {
+        DetermineClassToAdd(true);
+        $('#judgment').text(CORRECT_ANSWER);
+      } else {
+        DetermineClassToAdd(false);
+        $('#judgment').text(INCORRECT_ANSWER);
+      }
+      $('#output_result').text(data.content.stdout);
     })
     .fail((data) => {
-      alert('システムエラー');
+      alert('解答処理でシステムエラー');
       return;
     })
   }
@@ -136,7 +178,6 @@
       })
       .done((data) => {
         console.log('create成功');
-        console.log(data);
         if (data.error != null) {
           alert(data.error);
           return;
@@ -144,7 +185,7 @@
         ajaxGetDetails(data);
       })
       .fail((data) => {
-        alert('システムエラー');
+        alert('APIシステムエラー（Create）');
         return;
       })
     })

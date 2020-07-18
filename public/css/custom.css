@@ -75,3 +75,11 @@ h3.judgment {
   /*線の種類（実線） 太さ 色*/
   border-bottom: solid 3px black;
 }
+
+.incorrect {
+  color: red;
+}
+
+.correct {
+  color: green;
+}
