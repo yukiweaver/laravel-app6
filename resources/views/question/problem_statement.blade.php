@@ -38,6 +38,9 @@
             <br>
             <div>◎実行時エラーメッセージ</div>
             <div id="error_msg" class="incorrect"></div>
+            <div class="back_btn">
+              <a href="{{ route('root') }}" class="btn btn-primary" id="back_btn">一覧ページへ戻る</a>
+            </div>
          </section>
        </div>
      {{-- </div> --}}
@@ -76,6 +79,7 @@
   /** 
    * 追加するクラスを決定する
    * @param boolean addFlg
+   * @return boolean
    */
   function DetermineClassToAdd(addFlg)
   {

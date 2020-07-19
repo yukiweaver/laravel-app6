@@ -32,15 +32,28 @@ class Question extends Model
      * ランク問題を取得
      * @return collection
      */
-    public function findRankQuestions()
+    public function findRankQuestions($userId)
     {
       $rankQuestions = $this->whereIn('rank_id', function($query) {
         $query->select('id')
               ->from('ranks')
               ->whereNotIn('rank_type', [\RankConst::TRIAL_RANK_TYPE]);
       })->join('ranks', 'questions.rank_id', '=', 'ranks.id')
-        ->select('questions.*')
+        ->select('questions.*', 'ranks.rank_type')
         ->get();
+        
+        $questionUserObj = app()->make('App\QuestionUser');
+        foreach ($rankQuestions as $question) {
+          $questionId = $question->id;
+          $questionUser = $questionUserObj->findByQuestionIdAndUserId($questionId, $userId);
+          if ($questionUser) {
+            $question->is_correct = $questionUser->is_correct;
+            $question->is_challenge = $questionUser->is_challenge;
+          } else {
+            $question->is_correct = null;
+            $question->is_challenge = null;
+          }
+        }
       return $rankQuestions;
     }
 
@@ -55,7 +68,7 @@ class Question extends Model
               ->from('ranks')
               ->whereIn('rank_type', [\RankConst::TRIAL_RANK_TYPE]);
       })->join('ranks', 'questions.rank_id', '=', 'ranks.id')
-        ->select('questions.*')
+        ->select('questions.*', 'ranks.rank_type')
         ->get();
       return $trialQuestions;
     }

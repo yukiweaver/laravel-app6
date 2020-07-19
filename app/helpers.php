@@ -32,7 +32,7 @@ if (!function_exists('outputRankType')) {
 }
 
 if (!function_exists('putJsonError')) {
-  function putJsonError($data)
+  function putJsonError(array $data)
   {
     $array = [
       'status'    => 'ng',
@@ -44,7 +44,7 @@ if (!function_exists('putJsonError')) {
 }
 
 if (!function_exists('putJsonSuccess')) {
-  function putJsonSuccess($data)
+  function putJsonSuccess(array $data)
   {
     $array = [
       'status'    => 'ok',

@@ -42,8 +42,8 @@ class QuestionService
      */
     public function isRankQuestion()
     {
-      $rankId = $this->getQuestion()->rank_id;
-      if ($rankId !== \RankConst::TRIAL_RANK_TYPE) {
+      $rankType = $this->getQuestion()->rank->rank_type;
+      if ($rankType !== \RankConst::TRIAL_RANK_TYPE) {
         return true;
       }
       return false;

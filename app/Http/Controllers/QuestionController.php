@@ -16,16 +16,16 @@ class QuestionController extends Controller
     public function index()
     {
       $viewParams = [];
+      $questionModel = app()->make('App\Question');
       if (Auth::check()) {
         $currentUser = auth()->user();
         $currentRank = $currentUser->getRankType();
+        $questions = $questionModel->findRankQuestions($currentUser->id);
         $viewParams['current_rank'] = $currentRank;
+      } else {
+        $questions = $questionModel->findTrialQuestions();
       }
-      $questionModel = app()->make('App\Question');
-      $rankQuestions = $questionModel->findRankQuestions();
-      $trialQuestions = $questionModel->findTrialQuestions();
-      $viewParams['rank_questions'] = $rankQuestions;
-      $viewParams['trial_questions'] = $trialQuestions;
+      $viewParams['questions'] = $questions;
       return view('question.index', $viewParams);
     }
 
@@ -88,7 +88,7 @@ class QuestionController extends Controller
             $data['error'] = \MessageConst::ERRMSG_RANK_ABOVE_CURRENT_USER_RANK;
             return putJsonError($data);
           }
-          // ランク問題のみDB更新
+          // DB更新
           if ($question->updateQuestionUser($currentUser->id)) {
             return putJsonSuccess($data);
           }
