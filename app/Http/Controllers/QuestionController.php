@@ -17,13 +17,17 @@ class QuestionController extends Controller
     {
       $viewParams = [];
       $questionModel = app()->make('App\Question');
+      $questionService = app()->make('App\Services\QuestionService');
       if (Auth::check()) {
         $currentUser = auth()->user();
         $currentRank = $currentUser->getRankType();
         $questions = $questionModel->findRankQuestions($currentUser->id);
+        $remainingCorrectAnswersCnt = $questionService->getCorrectAnswersRemainingForPromotion($currentUser->id, $currentRank);
+        $viewParams['remaining_correct_answers_cnt'] = $remainingCorrectAnswersCnt;
         $viewParams['current_rank'] = $currentRank;
       } else {
         $questions = $questionModel->findTrialQuestions();
+        $viewParams['current_rank'] = null;
       }
       $viewParams['questions'] = $questions;
       return view('question.index', $viewParams);
@@ -65,6 +69,7 @@ class QuestionController extends Controller
 
     /**
      * 解答処理
+     * todo ランク昇格処理を入れる
      * @param Illuminate\Http\Request $request
      */
     public function answer(Request $request)

@@ -29,4 +29,17 @@ class QuestionUser extends Pivot
     {
       return $this->where('question_id', $questionId)->where('user_id', $userId)->first();
     }
+
+    /**
+     * questionIdsとuserIdをキーにしてレコード取得
+     * @param array $questionIds
+     * @param int $userId
+     * @return collection
+     */
+    public function findByQuestionIdsAndUserId(array $questionIds, int $userId)
+    {
+      return $this->whereIn('question_id', $questionIds)
+                  ->where('user_id', $userId)
+                  ->get();
+    }
 }

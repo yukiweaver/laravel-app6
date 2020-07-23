@@ -3,9 +3,39 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Rank;
 
 class Question extends Model
 {
+    private $rank;
+
+    public function __construct(array $attributes = [], Rank $rank = null) {
+      parent::__construct($attributes);
+      //以降に個別の設定処理
+      if (isset($rank)) {
+        $this->setRank($rank);
+      }
+    }
+
+    /**
+     * ランク情報をセットする
+     * @param App\Rank $rank
+     * @return void
+     */
+    public function setRank(Rank $rank)
+    {
+      $this->rank = $rank;
+    }
+
+    /**
+     * ランク情報を取得する
+     * @return App\Rank
+     */
+    public function getRank()
+    {
+      return $this->rank;
+    }
+
     /**
      * The attributes that are mass assignable.
      *
@@ -87,5 +117,32 @@ class Question extends Model
         return true;
       }
       return false;
+    }
+
+    /**
+     * 指定ユーザーのランクの問題の正解数を取得する
+     * @param int $userId
+     * @param int $rankType
+     * @return int
+     */
+    public function getCorrectAnswersCnt(int $userId, int $rankType)
+    {
+      $questionUserObj = app()->make('App\QuestionUser');
+      $rank = $this->getRank()->findByRankType($rankType);
+      $questionIds = [];
+      foreach ($rank->questions as $question) {
+        $questionIds[] = $question->id;
+      }
+      $questionUsers = $questionUserObj->findByQuestionIdsAndUserId($questionIds, $userId);
+      if ($questionUsers->isEmpty()) {
+        return 0;
+      }
+      $answerCnt = 0;
+      foreach ($questionUsers as $questionUser) {
+        if ($questionUser->is_correct) {
+          $answerCnt ++;
+        }
+      }
+      return $answerCnt;
     }
 }

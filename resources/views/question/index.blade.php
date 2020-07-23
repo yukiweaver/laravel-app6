@@ -20,7 +20,12 @@
          <section class="questions">
             @if (Auth::check())
             <h2>ランク問題</h2>　<!-- sectionに見出しになります　-->
-            <span>あなたは現在{{ outputRankType($current_rank) }}です。あと○問正解でランクが昇格します。</span>
+            <span>
+              あなたは現在{{ outputRankType($current_rank) }}です。
+              @if ($current_rank !== \RankConst::A_RANK_TYPE)
+              あと{{ $remaining_correct_answers_cnt }}問正解でランクが昇格します。
+              @endif
+            </span>
             <br><br>
             <div class="tab_wrap">
               <div class="tab_area">

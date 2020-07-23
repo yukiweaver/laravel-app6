@@ -48,4 +48,34 @@ class QuestionService
       }
       return false;
     }
+
+    /**
+     * ランク昇格に必要な残り問題正解数を取得
+     * @param int $userId
+     * @param int $rankType
+     * @return int
+     */
+    public function getCorrectAnswersRemainingForPromotion(int $userId, int $rankType)
+    {
+      $answersCnt = $this->getQuestion()->getCorrectAnswersCnt($userId, $rankType);
+      if ($rankType === \RankConst::D_RANK_TYPE) {
+        $remainingCorrectAnswersCnt = \RankConst::C_RANK_REQURED_NUMBER_OF_CORRECT_ANSWERS - $answersCnt;
+      }
+      if ($rankType === \RankConst::C_RANK_TYPE) {
+        $remainingCorrectAnswersCnt = \RankConst::B_RANK_REQURED_NUMBER_OF_CORRECT_ANSWERS - $answersCnt;
+      }
+      if ($rankType === \RankConst::B_RANK_TYPE) {
+        $remainingCorrectAnswersCnt = \RankConst::A_RANK_REQURED_NUMBER_OF_CORRECT_ANSWERS - $answersCnt;
+      }
+      if ($rankType === \RankConst::A_RANK_TYPE) {
+        $remainingCorrectAnswersCnt = 0;
+        return $remainingCorrectAnswersCnt;
+      }
+
+      if ($remainingCorrectAnswersCnt <= 0) {
+        // ユーザーがD〜Bランクなら0以下はあり得ない
+        throw new \Exception(\MessageConst::ERRMSG_INVALID_REMAINING_CORRECT_ANSWERS_CNT);
+      }
+      return $remainingCorrectAnswersCnt;
+    } 
 }
