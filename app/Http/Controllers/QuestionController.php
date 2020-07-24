@@ -80,6 +80,7 @@ class QuestionController extends Controller
         'is_result'   => '',
         'error'       => '',
       ];
+      $rankService = app()->make('App\Services\RankService');
       $questionObj = app()->make('App\Question');
       $question = $questionObj->findByQuestionId($request->id);
       $questionService = app()->makeWith('App\Services\QuestionService', ['question' => $question]);
@@ -88,6 +89,7 @@ class QuestionController extends Controller
         $data['is_result'] = true;
         if ($questionService->isRankQuestion()) {
           $currentUser = auth()->user();
+          $currentRank = $currentUser->getRankType();
           $userService = app()->makeWith('App\Services\UserService', ['user' => $currentUser]);
           if ($userService->isHigherThanCurrentUserRank($question->rank_type)) {
             // 自身のランクより上の問題は解答不可
@@ -95,16 +97,20 @@ class QuestionController extends Controller
             return putJsonError($data);
           }
           // DB更新
-          // DB::beginTransaction();
-          // try {
-          //   $question->updateQuestionUser($currentUser->id);
-          //   DB::commit();
-          //   return putJsonSuccess($data);
-          // } catch (\Exception $e) {
-          //   DB::rollback();
-          //   $data['error'] = \MessageConst::ERRMSG_DB_ERROR;
-          //   return putJsonError($data);
-          // }
+          DB::beginTransaction();
+          try {
+            $question->updateQuestionUser($currentUser->id);
+            if ($rankService->isPromotion($currentUser->id, $currentRank)) {
+              dd('ここにくるか');
+            }
+            dd('処理終了');
+            DB::commit();
+            return putJsonSuccess($data);
+          } catch (\Exception $e) {
+            DB::rollback();
+            $data['error'] = \MessageConst::ERRMSG_DB_ERROR;
+            return putJsonError($data);
+          }
         }
         return putJsonSuccess($data);
       }
