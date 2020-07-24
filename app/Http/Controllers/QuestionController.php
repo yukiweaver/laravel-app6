@@ -80,6 +80,7 @@ class QuestionController extends Controller
         'is_result'   => '',
         'error'       => '',
       ];
+      $rankObj = app()->make('App\Rank');
       $rankService = app()->make('App\Services\RankService');
       $questionObj = app()->make('App\Question');
       $question = $questionObj->findByQuestionId($request->id);
@@ -101,9 +102,10 @@ class QuestionController extends Controller
           try {
             $question->updateQuestionUser($currentUser->id);
             if ($rankService->isPromotion($currentUser->id, $currentRank)) {
-              dd('ここにくるか');
+              $nextRankType = $rankService->getRankAfterPromotion($currentRank);
+              $nextRank = $rankObj->findByRankType($nextRankType);
+              $currentUser->insertRankUser($nextRank->id);
             }
-            dd('処理終了');
             DB::commit();
             return putJsonSuccess($data);
           } catch (\Exception $e) {
