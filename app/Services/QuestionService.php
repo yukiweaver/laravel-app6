@@ -72,8 +72,8 @@ class QuestionService
         return $remainingCorrectAnswersCnt;
       }
 
-      if ($remainingCorrectAnswersCnt <= 0) {
-        // ユーザーがD〜Bランクなら0以下はあり得ない
+      if ($remainingCorrectAnswersCnt < 0) {
+        // 0より下はあり得ない
         throw new \Exception(\MessageConst::ERRMSG_INVALID_REMAINING_CORRECT_ANSWERS_CNT);
       }
       return $remainingCorrectAnswersCnt;

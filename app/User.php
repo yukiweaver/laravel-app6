@@ -125,11 +125,19 @@ class User extends Authenticatable
     }
 
     /**
-     * 中間テーブルへインサートする
+     * 中間テーブル（question_user）へインサートする
      * @param int $questionId
      */
     public function insertQuestionUser(int $questionId)
     {
       $this->questions()->attach($questionId, ['is_correct' => false, 'is_challenge' => true]);
+    }
+
+    /**
+     * 中間テーブル（rank_user）へインサートする
+     */
+    public function insertRankUser(int $rankId)
+    {
+      $this->ranks()->attach($rankId);
     }
 }
