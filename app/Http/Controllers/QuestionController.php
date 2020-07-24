@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Question;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\QuestionRequest;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class QuestionController extends Controller
 {
@@ -80,7 +80,8 @@ class QuestionController extends Controller
         'is_result'   => '',
         'error'       => '',
       ];
-      $question = Question::find($request->id);
+      $questionObj = app()->make('App\Question');
+      $question = $questionObj->findByQuestionId($request->id);
       $questionService = app()->makeWith('App\Services\QuestionService', ['question' => $question]);
       // 正解かどうか判定する
       if ($questionService->isCorrectAnswer($stdout)) {
@@ -94,11 +95,16 @@ class QuestionController extends Controller
             return putJsonError($data);
           }
           // DB更新
-          if ($question->updateQuestionUser($currentUser->id)) {
-            return putJsonSuccess($data);
-          }
-          $data['error'] = \MessageConst::ERRMSG_DB_ERROR;
-          return putJsonError($data);
+          // DB::beginTransaction();
+          // try {
+          //   $question->updateQuestionUser($currentUser->id);
+          //   DB::commit();
+          //   return putJsonSuccess($data);
+          // } catch (\Exception $e) {
+          //   DB::rollback();
+          //   $data['error'] = \MessageConst::ERRMSG_DB_ERROR;
+          //   return putJsonError($data);
+          // }
         }
         return putJsonSuccess($data);
       }

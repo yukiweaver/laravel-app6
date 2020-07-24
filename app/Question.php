@@ -104,6 +104,19 @@ class Question extends Model
     }
 
     /**
+     * 主キーからレコード取得
+     * @param int $questionId
+     * @return App\Question
+     */
+    public function findByQuestionId(int $questionId)
+    {
+      return $this->where('questions.id', $questionId)
+                  ->join('ranks', 'questions.id', '=', 'ranks.id')
+                  ->select('questions.*', 'ranks.rank_type')
+                  ->first();
+    }
+
+    /**
      * question_userテーブルの正解フラグを一件更新
      * @param int $userId
      * @return boolean
