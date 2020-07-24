@@ -69,7 +69,6 @@ class QuestionController extends Controller
 
     /**
      * 解答処理
-     * todo ランク昇格処理を入れる
      * @param Illuminate\Http\Request $request
      */
     public function answer(Request $request)
@@ -102,6 +101,7 @@ class QuestionController extends Controller
           try {
             $question->updateQuestionUser($currentUser->id);
             if ($rankService->isPromotion($currentUser->id, $currentRank)) {
+              // ランク昇格処理
               $nextRankType = $rankService->getRankAfterPromotion($currentRank);
               $nextRank = $rankObj->findByRankType($nextRankType);
               $currentUser->insertRankUser($nextRank->id);

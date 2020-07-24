@@ -79,7 +79,7 @@
   /**
    * appendするためのhtmlを生成する
    */
-  function createHtml(question)
+  function createHtml(question, currentRank)
   {
     html = '';
     html += '<section class="section">';
@@ -91,7 +91,9 @@
     if (question.is_correct) {
       html += '<span class="btn-sticky is_correct">クリア済み</span>';
     }
-    html += `<a href="/question/problem_statement?id=${question.id}" class="btn btn-primary challenge_btn">挑戦する</a>`;
+    if (currentRank <= question.rank_type) {
+      html += `<a href="/question/problem_statement?id=${question.id}" class="btn btn-primary challenge_btn">挑戦する</a>`;
+    }
     html += '</div>';
     html += '</section>';
 
@@ -101,19 +103,19 @@
   /**
    * ランクタイプごとにhtmlをappendする
    */
-  function appendRankQuestion(question, rankType)
+  function appendRankQuestion(question, rankType, currentRank)
   {
     if (rankType == a_rank_type) {
-      $('#rank_a').append(createHtml(question));
+      $('#rank_a').append(createHtml(question, currentRank));
     }
     if (rankType == b_rank_type) {
-      $('#rank_b').append(createHtml(question));
+      $('#rank_b').append(createHtml(question, currentRank));
     }
     if (rankType == c_rank_type) {
-      $('#rank_c').append(createHtml(question));
+      $('#rank_c').append(createHtml(question, currentRank));
     }
     if (rankType == d_rank_type) {
-      $('#rank_d').append(createHtml(question));
+      $('#rank_d').append(createHtml(question, currentRank));
     }
   }
 
@@ -174,7 +176,7 @@
         if (!question) {
           return true;
         }
-        appendRankQuestion(question, rankType);
+        appendRankQuestion(question, rankType, currentRank);
       });
     });
   });
