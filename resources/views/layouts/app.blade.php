@@ -15,6 +15,8 @@
  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.0/ace.js"></script>
  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.0/ext-language_tools.js"></script>
  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.js"></script>
+
 
  <!-- Fonts -->
  <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -62,6 +64,7 @@
 
                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                  <a class="dropdown-item" href="">アカウント変更</a>
+                 <a class="dropdown-item" href="{{ route('user.status', ['id' => Auth::user()->id]) }}">ステータス確認</a>
                  <a class="dropdown-item" href=""
                    onclick="event.preventDefault();
                                  document.getElementById('logout-form').submit();">

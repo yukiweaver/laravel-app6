@@ -23,5 +23,6 @@ Route::post('user/login', 'UserController@login')->name('user.login');
 Route::get('user/signup', 'UserController@signup')->name('user.signup');
 Route::post('user/store', 'UserController@store')->name('user.store');
 Route::post('user/logout', 'UserController@logout')->name('user.logout');
+Route::get('user/status', 'UserController@status')->name('user.status');
 Route::get('question/problem_statement', 'QuestionController@problemStatement')->name('question.problem_statement');
 Route::post('question/answer', 'QuestionController@answer')->name('question.answer');

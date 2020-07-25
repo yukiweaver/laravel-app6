@@ -5,9 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\UserRequest;
-use App\User;
 use Illuminate\Support\Facades\Hash;
-use App\Rank;
+use App\Http\Requests\UserStatusRequest;
 
 class UserController extends Controller
 {
@@ -72,5 +71,13 @@ class UserController extends Controller
     {
       Auth::logout();
       return redirect()->route('user.signin');
+    }
+
+    /**
+     * ステータス表示
+     */
+    public function status(UserStatusRequest $request)
+    {
+      return view('user.status');
     }
 }
