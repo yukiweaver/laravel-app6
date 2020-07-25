@@ -23,6 +23,11 @@
             <span>{{ $content }}</span>
             <br><br><br>
             <h3 class="answer_column">解答欄</h3>
+            <p>言語選択</p>
+            <select name="" id="" class="form-control">
+              <option value="1">PHP</option>
+              <option value="2">JavaScript</option>
+            </select>
             <div id="editor" style="height: 600px"></div>
             <br>
             <div class="output_btn">
@@ -63,12 +68,12 @@
     enableLiveAutocompletion: true
   });
   editor.setTheme("ace/theme/monokai");
-  editor.getSession().setMode("ace/mode/javascript");
+  editor.getSession().setMode("ace/mode/php");
 
   /**
    * 待機処理
    * @param int msec
-   * return void 
+   * @return void 
    */
   function sleep(msec) {
     return new Promise(function(resolve) {
@@ -101,6 +106,33 @@
     return true;
   }
 
+  /**
+   * 引数のフラグからdisabled属性を追加または解除する
+   * @param boolean addFlg
+   * @return void
+   */
+  function DetermineDisabledAddOrRelease(addFlg)
+  {
+    if (addFlg) {
+      $('#output_btn').text('...出力中');
+      $('#output_btn').prop('disabled', true);
+    } else {
+      $('#output_btn').text('出力する');
+      $('#output_btn').prop('disabled', false);
+    }
+  }
+
+  /**
+   * 判定で出力するテキストを削除する
+   * @return void
+   */
+  function deleteText()
+  {
+    $('#judgment').text('');
+    $('#output_result').text(''); 
+    $('#error_msg').text('');
+  }
+
   async function ajaxGetDetails(data) {
     await sleep(1000);
     let createId = data.id;
@@ -116,6 +148,8 @@
       ajaxAnswer(data);
     })
     .fail((data) => {
+      DetermineDisabledAddOrRelease(false);
+      deleteText();
       alert('APIシステムエラー（Details）');
       return;
     })
@@ -126,6 +160,8 @@
     if (data.stderr) {
       // 入力したプログラムにエラーがある場合はjs側でエラー処理
       DetermineClassToAdd(false);
+      DetermineDisabledAddOrRelease(false);
+      deleteText();
       $('#judgment').text(INCORRECT_ANSWER);
       $('#error_msg').text(data.stderr);
       return;
@@ -144,22 +180,26 @@
       }
     })
     .done((data) => {
-      console.log('answer成功');
-      console.log(data);
       if (data.status == 'ng') {
+        DetermineDisabledAddOrRelease(false);
+        deleteText();
         alert(data.content.error);
         return;
       }
       if (data.content.is_result) {
         DetermineClassToAdd(true);
+        deleteText();
         $('#judgment').text(CORRECT_ANSWER);
       } else {
         DetermineClassToAdd(false);
         $('#judgment').text(INCORRECT_ANSWER);
       }
       $('#output_result').text(data.content.stdout);
+      DetermineDisabledAddOrRelease(false);
     })
     .fail((data) => {
+      DetermineDisabledAddOrRelease(false);
+      deleteText();
       alert('解答処理でシステムエラー');
       return;
     })
@@ -167,6 +207,7 @@
 
   $(function() {
     $('#output_btn').click(function() {
+      DetermineDisabledAddOrRelease(true);
       let code = editor.getValue();
       $.ajax({
         url: CREATE_URL,
@@ -181,14 +222,17 @@
         }
       })
       .done((data) => {
-        console.log('create成功');
         if (data.error != null) {
+          DetermineDisabledAddOrRelease(false);
+          deleteText();
           alert(data.error);
           return;
         }
         ajaxGetDetails(data);
       })
       .fail((data) => {
+        DetermineDisabledAddOrRelease(false);
+        deleteText();
         alert('APIシステムエラー（Create）');
         return;
       })
