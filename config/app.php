@@ -230,6 +230,7 @@ return [
         // 定数系
         'RankConst' =>  App\Consts\RankConst::class,
         'MessageConst' => App\Consts\MessageConst::class,
+        'QuestionConst' => App\Consts\QuestionConst::class,
 
     ],
 

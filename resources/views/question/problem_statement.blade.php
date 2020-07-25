@@ -22,12 +22,15 @@
            <h2 class="problem_statement_name">{{ $name }}</h2>　<!-- sectionに見出しになります　-->
             <span>{{ $content }}</span>
             <br><br><br>
-            <h3 class="answer_column">解答欄</h3>
+            <h3 class="answer_column">解答欄</h3><br>
             <p>言語選択</p>
-            <select name="" id="" class="form-control">
-              <option value="1">PHP</option>
-              <option value="2">JavaScript</option>
-            </select>
+            <div class="cp_ipselect cp_sl01">
+              <select id="languages" required>
+                @foreach ($languages as $key => $val)
+                  <option value="{{ $key }}">{{ $val }}</option>
+                @endforeach
+              </select>
+            </div>
             <div id="editor" style="height: 600px"></div>
             <br>
             <div class="output_btn">
@@ -59,7 +62,6 @@
   const API_KEY = 'guest';
   const INCORRECT_ANSWER = '不正解';
   const CORRECT_ANSWER = '正解';
-  let responseDetail = null;
   var editor = ace.edit("editor");
   editor.$blockScrolling = Infinity;
   editor.setOptions({
@@ -68,7 +70,7 @@
     enableLiveAutocompletion: true
   });
   editor.setTheme("ace/theme/monokai");
-  editor.getSession().setMode("ace/mode/php");
+  editor.getSession().setMode("ace/mode/php");　// 言語モードの初期はphp
 
   /**
    * 待機処理
@@ -206,6 +208,9 @@
   }
 
   $(function() {
+    $('#languages').change(function() {
+      editor.getSession().setMode("ace/mode/" + $('#languages').val());
+    })
     $('#output_btn').click(function() {
       DetermineDisabledAddOrRelease(true);
       let code = editor.getValue();
@@ -214,7 +219,7 @@
         type: 'POST',
         data: {
           source_code: code,
-          language: 'php',
+          language: $('#languages').val(),
           input: '',
           longpoll: '',
           longpoll_timeout: '',

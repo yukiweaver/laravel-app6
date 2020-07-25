@@ -60,9 +60,10 @@ class QuestionController extends Controller
         }
       }
       $viewParams = [
-        'name'        => $question->name,
-        'content'     => $question->content,
-        'question_id' => $question->id,
+        'name'          => $question->name,
+        'content'       => $question->content,
+        'question_id'   => $question->id,
+        'languages' => \QuestionConst::LANGUAGES,
       ];
       return view('question.problem_statement', $viewParams);
     }
