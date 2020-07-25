@@ -78,6 +78,20 @@ class UserController extends Controller
      */
     public function status(UserStatusRequest $request)
     {
-      return view('user.status');
+      $userServiceObj = app()->make('App\Services\UserService');
+
+      if (!$userServiceObj->checkCurrentUserId($request->id)) {
+        abort(401);
+      }
+
+      $questionServiceObj = app()->make('App\Services\QuestionService');
+      $currentUser = auth()->user();
+      $currentRank = $currentUser->getRankType();
+      $remainingCorrectAnswersCnt = $questionServiceObj->getCorrectAnswersRemainingForPromotion($currentUser->id, $currentRank);
+      $viewParams = [
+        'remaining_correct_answers_cnt' => $remainingCorrectAnswersCnt,
+        'current_rank'                  => $currentRank,
+      ];
+      return view('user.status', $viewParams);
     }
 }

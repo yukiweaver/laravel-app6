@@ -19,8 +19,10 @@
          <h1>ステータス確認</h1>
          <section class="questions">
           <span>
-            あなたは現在Cランクです。
-            あと○問正解でランクが昇格します。
+            あなたは現在{{ outputRankType($current_rank) }}です。
+            @if ($current_rank !== \RankConst::A_RANK_TYPE)
+            あと{{ $remaining_correct_answers_cnt }}問正解でランクが昇格します。
+            @endif
           </span>
           <br>
           <canvas id="myRaderChart"></canvas>
@@ -70,19 +72,19 @@
   var myRadarChart = new Chart(ctx, {
       type: 'radar', 
       data: { 
-          labels: ["英語", "数学", "国語", "理科"],
+          labels: ["Aランク", "Bランク", "Cランク", "Dランク"],
           datasets: [{
-              label: 'Aさん',
-              data: [92, 72, 86, 74],
+              label: '挑戦数',
+              data: [8, 7, 6, 7],
               backgroundColor: 'RGBA(225,95,150, 0.5)',
               borderColor: 'RGBA(225,95,150, 1)',
               borderWidth: 1,
-              pointBackgroundColor: 'RGB(46,106,177)'
+              pointBackgroundColor: 'RGBA(46,106,177)'
           }, {
-              label: 'Bさん',
-              data: [73, 95, 80, 87],
-              backgroundColor: 'RGBA(115,255,25, 0.5)',
-              borderColor: 'RGBA(115,255,25, 1)',
+              label: 'クリア数',
+              data: [3, 5, 5, 5],
+              backgroundColor: 'RGBA(115,255,100, 0.5)',
+              borderColor: 'RGBA(115,255,100, 1)',
               borderWidth: 1,
               pointBackgroundColor: 'RGB(46,106,177)'
           }]
@@ -90,15 +92,15 @@
       options: {
           title: {
               display: true,
-              text: '試験成績'
+              text: 'ステータス'
           },
           scale:{
               ticks:{
                   suggestedMin: 0,
-                  suggestedMax: 100,
-                  stepSize: 10,
+                  suggestedMax: 10,
+                  stepSize: 1,
                   callback: function(value, index, values){
-                      return  value +  '点'
+                      return  value +  '問'
                   }
               }
           }

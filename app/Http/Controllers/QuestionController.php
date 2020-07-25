@@ -63,7 +63,7 @@ class QuestionController extends Controller
         'name'          => $question->name,
         'content'       => $question->content,
         'question_id'   => $question->id,
-        'languages' => \QuestionConst::LANGUAGES,
+        'languages'     => \QuestionConst::LANGUAGES,
       ];
       return view('question.problem_statement', $viewParams);
     }
