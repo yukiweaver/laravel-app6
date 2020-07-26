@@ -56,43 +56,58 @@
  </div>
 </div>
 <script>
-  var ctx = document.getElementById("myRaderChart");
-  var myRadarChart = new Chart(ctx, {
-      type: 'radar', 
-      data: { 
-          labels: ["Aランク", "Bランク", "Cランク", "Dランク"],
-          datasets: [{
-              label: '挑戦数',
-              data: [8, 7, 6, 7],
-              backgroundColor: 'RGBA(225,95,150, 0.5)',
-              borderColor: 'RGBA(225,95,150, 1)',
-              borderWidth: 1,
-              pointBackgroundColor: 'RGBA(46,106,177)'
-          }, {
-              label: 'クリア数',
-              data: [3, 5, 5, 5],
-              backgroundColor: 'RGBA(115,255,100, 0.5)',
-              borderColor: 'RGBA(115,255,100, 1)',
-              borderWidth: 1,
-              pointBackgroundColor: 'RGB(46,106,177)'
-          }]
-      },
-      options: {
-          title: {
-              display: true,
-              text: 'ステータス'
-          },
-          scale:{
-              ticks:{
-                  suggestedMin: 0,
-                  suggestedMax: 10,
-                  stepSize: 1,
-                  callback: function(value, index, values){
-                      return  value +  '問'
-                  }
-              }
-          }
-      }
+  let userStatusInfo = @json($user_status_info);
+  const a_rank_type = 1;
+  const b_rank_type = 2;
+  const c_rank_type = 3;
+  const d_rank_type = 4;
+  let challengeCntData = [];
+  let answeredCntData = [];
+  $(function() {
+    $.each(userStatusInfo, function(ids, status) {
+      // # userStatusInfoがAランクから順にソートされていることが前提の処理
+      challengeCntData.push(status.challenge_cnt);
+      answeredCntData.push(status.correct_cnt);
+    });
+  
+    var ctx = document.getElementById("myRaderChart");
+    var myRadarChart = new Chart(ctx, {
+        type: 'radar', 
+        data: { 
+            labels: ["Aランク", "Bランク", "Cランク", "Dランク"],
+            datasets: [{
+                label: '挑戦数',
+                data: challengeCntData,
+                backgroundColor: 'RGBA(225,95,150, 0.5)',
+                borderColor: 'RGBA(225,95,150, 1)',
+                borderWidth: 1,
+                pointBackgroundColor: 'RGBA(46,106,177)'
+            }, {
+                label: 'クリア数',
+                data: answeredCntData,
+                backgroundColor: 'RGBA(115,255,100, 0.5)',
+                borderColor: 'RGBA(115,255,100, 1)',
+                borderWidth: 1,
+                pointBackgroundColor: 'RGB(46,106,177)'
+            }]
+        },
+        options: {
+            title: {
+                display: true,
+                text: 'ステータス'
+            },
+            scale:{
+                ticks:{
+                    suggestedMin: 0,
+                    suggestedMax: 10,
+                    stepSize: 1,
+                    callback: function(value, index, values){
+                        return  value +  '問'
+                    }
+                }
+            }
+        }
+    });
   });
 </script>
 @endsection
