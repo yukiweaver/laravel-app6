@@ -111,7 +111,7 @@ class Question extends Model
     public function findByQuestionId(int $questionId)
     {
       return $this->where('questions.id', $questionId)
-                  ->join('ranks', 'questions.id', '=', 'ranks.id')
+                  ->join('ranks', 'questions.rank_id', '=', 'ranks.id')
                   ->select('questions.*', 'ranks.rank_type')
                   ->first();
     }

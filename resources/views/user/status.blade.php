@@ -27,40 +27,28 @@
           <br>
           <canvas id="myRaderChart"></canvas>
           <br>
+          @foreach ($user_status_info as $rankType => $status)
+          <h4>{{ outputRankType($rankType) }}</h4>
           <table class="table">
             <thead>
               <tr>
-                <th></th>
-                <th>Aランク</th>
-                <th>Bランク</th>
-                <th>Cランク</th>
-                <th>Dランク</th>
+                <th>問題数</th>
+                <th>挑戦数</th>
+                <th>クリア数</th>
+                <th>正答率</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <th>挑戦数</th>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
-              <tr>
-                <th>クリア数</th>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
-              <tr>
-                <th>正答率</th>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td>{{ $status['questions_cnt'] }}問</td>
+                <td>{{ $status['challenge_cnt'] }}問</td>
+                <td>{{ $status['correct_cnt'] }}問</td>
+                <td>{{ $status['answer_rate'] }}%</td>
               </tr>
             </tbody>
           </table>
+          <br>
+          @endforeach
          </section>
        </div>
      {{-- </div> --}}

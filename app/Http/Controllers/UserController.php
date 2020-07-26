@@ -75,6 +75,7 @@ class UserController extends Controller
 
     /**
      * ステータス表示
+     * todo ログイン時のみアクセス可能に
      */
     public function status(UserStatusRequest $request)
     {
@@ -84,13 +85,18 @@ class UserController extends Controller
         abort(401);
       }
 
+      $questionObj = app()->make('App\Question');
       $questionServiceObj = app()->make('App\Services\QuestionService');
       $currentUser = auth()->user();
       $currentRank = $currentUser->getRankType();
       $remainingCorrectAnswersCnt = $questionServiceObj->getCorrectAnswersRemainingForPromotion($currentUser->id, $currentRank);
+      $questions = $questionObj->findRankQuestions($currentUser->id);
+      $userStatusInfo = $questionServiceObj->getUserStatusInfo($questions);
+      // dd($userStatusInfo);
       $viewParams = [
         'remaining_correct_answers_cnt' => $remainingCorrectAnswersCnt,
         'current_rank'                  => $currentRank,
+        'user_status_info'              => $userStatusInfo,
       ];
       return view('user.status', $viewParams);
     }
