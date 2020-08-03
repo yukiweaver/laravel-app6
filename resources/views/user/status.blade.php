@@ -57,24 +57,35 @@
 </div>
 <script>
   let userStatusInfo = @json($user_status_info);
+  let allRanksName = @json($all_ranks_name);
   const a_rank_type = 1;
   const b_rank_type = 2;
   const c_rank_type = 3;
   const d_rank_type = 4;
+  let suggestedMax = 0;
   let challengeCntData = [];
   let answeredCntData = [];
+  let allRanks = [];
   $(function() {
     $.each(userStatusInfo, function(ids, status) {
       // # userStatusInfoがAランクから順にソートされていることが前提の処理
       challengeCntData.push(status.challenge_cnt);
       answeredCntData.push(status.correct_cnt);
+
+      if (suggestedMax < status.questions_cnt) {
+        suggestedMax = status.questions_cnt;
+      };
+    });
+
+    $.each(allRanksName, function(ids, val) {
+      allRanks.push(val);
     });
   
     var ctx = document.getElementById("myRaderChart");
     var myRadarChart = new Chart(ctx, {
         type: 'radar', 
         data: { 
-            labels: ["Aランク", "Bランク", "Cランク", "Dランク"],
+            labels: allRanks,
             datasets: [{
                 label: '挑戦数',
                 data: challengeCntData,
@@ -99,7 +110,7 @@
             scale:{
                 ticks:{
                     suggestedMin: 0,
-                    suggestedMax: 10,
+                    suggestedMax: suggestedMax,
                     stepSize: 1,
                     callback: function(value, index, values){
                         return  value +  '問'

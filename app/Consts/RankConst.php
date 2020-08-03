@@ -12,4 +12,10 @@ class RankConst
   const C_RANK_REQURED_NUMBER_OF_CORRECT_ANSWERS = 2; // Cランク昇格に必要なDランク問題の正解数
   const B_RANK_REQURED_NUMBER_OF_CORRECT_ANSWERS = 5; // Bランク昇格に必要なCランク問題の正解数
   const A_RANK_REQURED_NUMBER_OF_CORRECT_ANSWERS = 5; // Aランク昇格に必要なBランク問題の正解数
+  const All_RANKS_NAME = [
+    'Aランク',
+    'Bランク',
+    'Cランク',
+    'Dランク',
+  ];
 }
