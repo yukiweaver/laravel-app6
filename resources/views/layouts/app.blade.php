@@ -63,7 +63,7 @@
                </a>
 
                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                 <a class="dropdown-item" href="">アカウント変更</a>
+                 {{-- <a class="dropdown-item" href="">アカウント変更</a> --}}
                  <a class="dropdown-item" href="{{ route('user.status', ['id' => Auth::user()->id]) }}">ステータス確認</a>
                  <a class="dropdown-item" href=""
                    onclick="event.preventDefault();
