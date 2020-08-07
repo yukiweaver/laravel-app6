@@ -56,7 +56,7 @@
  </div>
 </div>
 <script>
-  const BASE_URL = 'http://api.paiza.io';
+  const BASE_URL = 'https://api.paiza.io';
   const CREATE_URL = BASE_URL + '/runners/create';
   const GET_DETAILS_URL = BASE_URL + '/runners/get_details';
   const API_KEY = 'guest';
