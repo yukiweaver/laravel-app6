@@ -25,10 +25,10 @@ class QuestionService
 
     /**
      * 出力結果が正解かどうか判定
-     * @param string $stdout
+     * @param string|null $stdout
      * @return boolean true:正解 false:不正解
      */
-    public function isCorrectAnswer(string $stdout)
+    public function isCorrectAnswer(?string $stdout)
     {
       $answer = $this->getQuestion()->answer;
       if ($answer == $stdout) {
